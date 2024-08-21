@@ -10,7 +10,7 @@ on:
     - cron: '0 */2 * * *'
 
 permissions:
-  contents: read,write
+  contents: read write
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
