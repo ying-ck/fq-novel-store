@@ -120,7 +120,7 @@ def down_book(it):
     
     fg = '\n' + config['kgf'] * config['kg']
     if config['save_mode']==1:
-        text_file_path = os.path.join(config['save_path'], safe_name + '.txt')
+        text_file_path = './'+os.path.join(config['save_path'], safe_name + '.txt')
         with open(text_file_path, 'w', encoding='UTF-8') as text_file:
             for chapter_title in zj:
                 text_file.write('\n'+chapter_title + fg)
@@ -229,20 +229,19 @@ def book2down(inp):
 #script_dir = os.path.dirname(os.path.abspath(__file__))
 script_dir = './'
 
-data_dir = os.path.join(script_dir, 'data')
+data_dir = +os.path.join(script_dir, 'data')
 
 if not os.path.exists(data_dir):
     os.makedirs(data_dir)
 
-bookstore_dir = os.path.join(data_dir,'bookstore')
+bookstore_dir = './'+os.path.join(data_dir,'bookstore')
 
 if not os.path.exists(bookstore_dir):
     os.makedirs(bookstore_dir)
 
-record_path = os.path.join(data_dir, 'record.json')
-config_path = os.path.join(data_dir, 'config.json')
+record_path = './'+os.path.join(data_dir, 'record.json')
+config_path = './'+os.path.join(data_dir, 'config.json')
 
-config_path = os.path.join(data_dir, 'config.json')
 reset = {'kg': 0,'kgf': '　','delay': [50,150],'save_path': '','save_mode': 1}
 if not os.path.exists(config_path):
     if os.path.exists('config.json'):
@@ -258,7 +257,6 @@ for i in reset:
     if not i in config:
         config[i] = reset[i]
 
-record_path = os.path.join(data_dir, 'record.json')
 if not os.path.exists(record_path):
     if os.path.exists('record.json'):
         os.replace('record.json',record_path)
