@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Check JMComic Android APK
+name: update novel
 
 # Controls when the workflow will run
 on:
@@ -14,7 +14,7 @@ permissions:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  check:
+  update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,7 +22,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.7"
-
       - name: Install Dependency
         run: |
           python -m pip install --upgrade pip
@@ -34,3 +33,12 @@ jobs:
         id: script
         run: |
           python novel-update-only.py
+          
+      - name: Commit
+        run: |
+          git config --global user.email "107254798+ying-ck@users.noreply.github.com"
+          git config --global user.name "ying-ck"
+          git add .
+          git commit -m "update novel"
+          git push
+          echo "finished"
