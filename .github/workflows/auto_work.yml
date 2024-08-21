@@ -1,0 +1,36 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Check JMComic Android APK
+
+# Controls when the workflow will run
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */2 * * *'
+
+permissions:
+  contents: read,write
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.7"
+
+      - name: Install Dependency
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+          pip install lxml
+          pip install ebooklib
+
+      - name: Run Script
+        id: script
+        run: |
+          python novel-update-only.py
