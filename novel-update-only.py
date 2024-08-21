@@ -229,7 +229,7 @@ def book2down(inp):
 #script_dir = os.path.dirname(os.path.abspath(__file__))
 script_dir = './'
 
-data_dir = +os.path.join(script_dir, 'data')
+data_dir = os.path.join(script_dir, 'data')
 
 if not os.path.exists(data_dir):
     os.makedirs(data_dir)
