@@ -39,7 +39,7 @@ jobs:
           git config --global user.name "ying-ck"
           git add ./book
           git add ./data
-          git add ./booklist
+          git add ./booklist.json
           git commit -m "update novel"
           git push
           echo "finished"
@@ -54,6 +54,7 @@ jobs:
           onlyRemoveDeployments: true
   # Single deploy job since we're just deploying
   deploy:
+    needs: [update,cleanup]
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
