@@ -9,10 +9,7 @@ on:
   schedule:
     - cron: '0 */2 * * *'
 
-permissions:
-  contents: write
-  pages: write
-  id-token: write
+permissions: write-all
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
