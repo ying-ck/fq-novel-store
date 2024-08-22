@@ -13,6 +13,15 @@ headers_lib = [
 
 headers = headers_lib[random.randint(0,len(headers_lib)-1)]
 
+def get_cookie():
+    global cookie
+    bas = 6000000000000000000
+    for i in range(random.randint(0,2000000000000000000)+bas,9000000000000000000):
+        time.sleep(random.randint(50,150)/1000)
+        cookie = 'novel_web_id='+str(i)
+        if len(down_text(7175520908897944079,2))>200:
+            return 's'
+
 def down_zj(it):
     global headers
     an = {}
@@ -40,17 +49,23 @@ def str_interpreter(n,mode):
             s += n[i]
     return s
 
-def down_text(it):
+def down_text(it,mod=1):
+    global cookie
     headers2 = headers
-    headers2['cookie'] = 'novel_web_id=7357767624615331362'
+    headers2['cookie'] = cookie
     while True:
         try:
             res = req.get('https://fanqienovel.com/api/reader/full?itemId='+str(it),headers=headers2)
             n = json.loads(res.text)['data']['chapterData']['content']
             break
         except:
+            if mod==2:
+                return('err')
             time.sleep(0.5)
-    s = str_interpreter(n,0)
+    if mod==1:
+        s = str_interpreter(n,0)
+    else:
+        s = n
     try:
         return '\n'.join(etree.HTML(s).xpath('//p/text()'))
     except:
@@ -214,6 +229,8 @@ if not os.path.exists(record_path):
 
 if not os.path.exists(config['save_path']):
     os.makedirs(config['save_path'])
+
+get_cookie()
 
 with open(record_path, 'r', encoding='UTF-8') as f:
     records = json.load(f)
