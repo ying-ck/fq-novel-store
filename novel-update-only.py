@@ -117,7 +117,7 @@ def down_book(it):
             ozj = json.load(json_file)
     else:
         ozj = {}
-    
+    cs = 0
     for i in zj:
         f = False
         if i in ozj:
@@ -129,8 +129,14 @@ def down_book(it):
         else:
             f = True
         if f:
+            print(i)
             zj[i] = down_text(zj[i])
             time.sleep(random.randint(config['delay'][0],config['delay'][1])/1000)
+            cs += 1
+            if cs >= 5:
+                cs = 0
+                with open(book_json_path, 'w', encoding='UTF-8') as json_file:
+                    json.dump(zj, json_file, ensure_ascii=False)
 
     if zj==ozj:
         return zt
