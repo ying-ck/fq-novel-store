@@ -158,7 +158,15 @@ def book2down(inp):
             return 's'
     except ValueError:
         return 'err'
-
+    
+def getbook():
+    rec = listdir('book')
+    for i in range(len(rec)):
+        for j in range(len(rec[i])-1,-1,-1):
+            if rec[i][j]=='.':
+                break
+        rec[i] = rec[i][:j]
+    return rec
 
 #script_dir = os.path.dirname(os.path.abspath(__file__))
 script_dir = ''
@@ -209,4 +217,6 @@ for book_id in records:
         records.remove(book_id)
 with open(record_path, 'w', encoding='UTF-8') as f:
     json.dump(records, f)
+with open('booklist.json', 'w', encoding='UTF-8') as f:
+    json.dump(getbook(), f)
 print('success')
