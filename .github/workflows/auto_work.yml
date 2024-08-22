@@ -44,6 +44,7 @@ jobs:
           git push
           echo "finished"
   cleanup:
+    needs: [update]
     runs-on: ubuntu-latest
     steps:
       - name:  Delete deployment
