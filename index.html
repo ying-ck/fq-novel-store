@@ -1,37 +1,46 @@
-<!doctype html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<title>fq-novel-store</title>
-	<style>
-		.box {
-    border: 1px solid #000000;
-    margin: auto;
-    width: 40%;
-    border-radius: 15px;
-    -webkit-box-shadow: 1px 1px 1px #000000;
-    box-shadow: 1px 1px 1px #000000;
-}
-	</style>
-	<script src="https://cdn.staticfile.net/jquery/2.2.4/jquery.min.js"></script>
-</head>
-
-<body style="text-align: center">
-	<h1>fq-novel-store</h1>
-	<div id="booklist"></div>
-	<script>
-		$(document).ready(function() {  
-    		$.getJSON("booklist.json", function(data) {
-				var $booklist = $('#booklist');
-                $booklist.empty();
-        		$.each(data, function(i, item) {
-					var url = 'book/'+item+'.txt'
-            		$booklist.append('<div class="box" onclick="'+url+'">' + item + '</div><p/>');
-        		});  
-    		}).fail(function(jqXHR, textStatus, errorThrown) { 
-        		console.error("获取数据失败: " + textStatus, errorThrown);
-    		});  
-		}); 
-	</script>
-</body>
+<!doctype html>  
+<html>  
+<head>  
+    <meta charset="utf-8">  
+    <title>fq-novel-store</title>  
+    <style>  
+        .box {  
+            border: 1px solid #000000;  
+            margin: 10px auto;  
+            width: 40%;  
+            padding: 10px;  
+            border-radius: 15px;  
+            -webkit-box-shadow: 1px 1px 1px #000000;  
+            box-shadow: 1px 1px 1px #000000;  
+            cursor: pointer;  
+            text-align: center;  
+        }  
+    </style>  
+    <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>  
+</head>  
+  
+<body style="text-align: center">  
+    <h1>fq-novel-store</h1>  
+    <div id="booklist"></div>  
+    <script>  
+        $(document).ready(function() {  
+            $.getJSON("booklist.json", function(data) {  
+                var $booklist = $('#booklist');  
+                $booklist.empty();  
+                $.each(data, function(i, item) {  
+                    var url = 'book/' + item + '.txt';  
+                    $booklist.append('<div class="box" data-url="' + url + '">' + item + '</div><br/>');  
+                });  
+  
+                // 为所有书籍盒子添加点击事件  
+                $('#booklist').on('click', '.box', function() {  
+                    var url = $(this).data('url');  
+                    window.location.href = url; // 或者使用其他逻辑，如 AJAX 请求  
+                });  
+            }).fail(function(jqXHR, textStatus, errorThrown) {  
+                console.error("获取数据失败: " + textStatus, errorThrown);  
+            });  
+        });  
+    </script>  
+</body>  
 </html>
