@@ -1,6 +1,5 @@
 import requests as req
 from lxml import etree
-from ebooklib import epub
 import json,time,random,os
 
 CODE = [[58344,58715],[58345,58716]]
@@ -95,7 +94,6 @@ def down_book(it):
     else:
         ozj = {}
     
-    cs = 0
     for i in zj:
         f = False
         if i in ozj:
@@ -109,11 +107,9 @@ def down_book(it):
         if f:
             zj[i] = down_text(zj[i])
             time.sleep(random.randint(config['delay'][0],config['delay'][1])/1000)
-            cs += 1
-            if cs>=5:
-                cs = 0
-                with open(book_json_path, 'w', encoding='UTF-8') as json_file:
-                    json.dump(zj, json_file,ensure_ascii=False)
+
+    if zj==ozj:
+        return zt
 
     with open(book_json_path, 'w', encoding='UTF-8') as json_file:
         json.dump(zj, json_file,ensure_ascii=False)
@@ -144,65 +140,6 @@ def down_book(it):
 
     return zt
 
-def down_book_epub(it):
-    name, zj, zt = down_zj(it)
-    if name == 'err':
-        return 'err'
-    zt = zt[0]
-
-    safe_name = sanitize_filename(name)
-    book_dir = os.path.join(script_dir, safe_name)
-
-    book_json_path = os.path.join(bookstore_dir, safe_name + '.json')
-
-    if os.path.exists(book_json_path):
-        with open(book_json_path, 'r', encoding='UTF-8') as json_file:
-            ozj = json.load(json_file)
-    else:
-        ozj = {}
-
-    book = epub.EpubBook()
-    book.set_title(name)
-    book.set_language('zh')
-    
-    toc = []
-
-    cs = 0
-    pbar = tqdm(total=len(zj))
-    for chapter_title, chapter_id in zj.items():
-        f = False
-        if chapter_title in ozj:
-            try:
-                int(ozj[chapter_title])
-                f = True
-            except:
-                zj[chapter_title] = ozj[chapter_title]
-        else:
-            f = True
-        if f:
-            chapter_content = down_text(chapter_id)
-            time.sleep(random.randint(config['delay'][0], config['delay'][1]) / 1000)
-            cs += 1
-            if cs >= 5:
-                cs = 0
-                with open(book_json_path, 'w', encoding='UTF-8') as json_file:
-                    json.dump(zj, json_file, ensure_ascii=False)
-
-            formatted_content = chapter_content.replace('\n', '<br/>')
-            chapter = epub.EpubHtml(title=chapter_title, file_name=f'{chapter_title}.xhtml', content=f'<h1>{chapter_title}</h1><p>{formatted_content}</p>')
-            book.add_item(chapter)
-
-            toc.append((epub.Section(chapter_title), [chapter]))
-            book.spine.append(chapter)
-        pbar.update(1)
-
-    book.toc = toc
-    book.add_item(epub.EpubNcx())
-    epub.write_epub(os.path.join(config['save_path'], f'{safe_name}.epub'), book, {})
-
-    return 's'
-
-
 def book2down(inp):
     if inp[:4] == 'http':
         inp = inp.split('?')[0].split('/')[-1]
@@ -214,10 +151,7 @@ def book2down(inp):
             records.append(book_id)
         with open(record_path, 'w', encoding='UTF-8') as f:
             json.dump(records, f)
-        if config['save_mode'] == 3:
-            status = down_book_epub(book_id)
-        else:
-            status = down_book(book_id)
+        status = down_book(book_id)
         if status == 'err':
             return 'err'
         else:

@@ -27,7 +27,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
           pip install lxml
-          pip install ebooklib
 
       - name: Run Script
         id: script
