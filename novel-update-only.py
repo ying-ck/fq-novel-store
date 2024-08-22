@@ -160,7 +160,7 @@ def book2down(inp):
         return 'err'
     
 def getbook():
-    rec = listdir('book')
+    rec = os.listdir('book')
     for i in range(len(rec)):
         for j in range(len(rec[i])-1,-1,-1):
             if rec[i][j]=='.':
