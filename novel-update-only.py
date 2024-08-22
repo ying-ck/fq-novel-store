@@ -13,14 +13,22 @@ headers_lib = [
 
 headers = headers_lib[random.randint(0,len(headers_lib)-1)]
 
-def get_cookie():
+bas = 1000000000000000000
+
+def get_cookie(zj,t=0):
     global cookie
-    bas = 6000000000000000000
-    for i in range(random.randint(0,2000000000000000000)+bas,9000000000000000000):
-        time.sleep(random.randint(50,150)/1000)
-        cookie = 'novel_web_id='+str(i)
-        if len(down_text(7175520908897944079,2))>200:
+    if t==0:
+        for i in range(random.randint(bas*6,bas*8),bas*9):
+            time.sleep(random.randint(50,150)/1000)
+            cookie = 'novel_web_id='+str(i)
+            if len(down_text(zj,2))>200:
+                return 's'
+    else:
+        cookie = t
+        if len(down_text(zj,2))>200:
             return 's'
+        else:
+            return 'err'
 
 def down_zj(it):
     global headers
@@ -230,7 +238,17 @@ if not os.path.exists(record_path):
 if not os.path.exists(config['save_path']):
     os.makedirs(config['save_path'])
 
-get_cookie()
+cookie_path = os.path.join(data_dir, 'cookie.json')
+tzj = int(random.choice(list(down_zj(7143038691944959011)[1].values())[21:]))
+tmod = 0
+if os.path.exists(cookie_path):
+    with open(cookie_path, 'r', encoding='UTF-8') as f:
+        cookie = json.load(f)
+    tmod = 1
+if tmod==0 or get_cookie(tzj,cookie)=='err':
+    get_cookie(tzj)
+with open(cookie_path, 'w', encoding='UTF-8') as f:
+    json.dump(cookie,f)
 
 with open(record_path, 'r', encoding='UTF-8') as f:
     records = json.load(f)
