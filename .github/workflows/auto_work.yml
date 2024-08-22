@@ -46,6 +46,15 @@ jobs:
           git commit -m "update novel"
           git push
           echo "finished"
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name:  Delete deployment
+        uses: strumwolf/delete-deployment-environment@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: github-pages
+          onlyRemoveDeployments: true
   # Single deploy job since we're just deploying
   deploy:
     environment:
