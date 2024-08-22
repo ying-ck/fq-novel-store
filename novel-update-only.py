@@ -77,6 +77,7 @@ def sanitize_filename(filename):
 
 
 def down_book(it):
+    global ft
     name, zj, zt = down_zj(it)
     if name == 'err':
         return 'err'
