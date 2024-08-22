@@ -111,6 +111,7 @@ def down_book(it):
     if zj==ozj:
         return zt
 
+    ft = True
     with open(book_json_path, 'w', encoding='UTF-8') as json_file:
         json.dump(zj, json_file,ensure_ascii=False)
     
@@ -168,6 +169,10 @@ def getbook():
         rec[i] = rec[i][:j]
     return rec
 
+def add_output(k, v):
+    cmd = f'echo "{k}={v}" >> $GITHUB_OUTPUT'
+    print(f'{cmd}: {os.system(cmd)}')
+
 #script_dir = os.path.dirname(os.path.abspath(__file__))
 script_dir = ''
 
@@ -211,6 +216,7 @@ if not os.path.exists(config['save_path']):
 
 with open(record_path, 'r', encoding='UTF-8') as f:
     records = json.load(f)
+ft = False
 for book_id in records:
     status = down_book(book_id)
     if status == 'err' or status == u'已完结':
@@ -219,4 +225,6 @@ with open(record_path, 'w', encoding='UTF-8') as f:
     json.dump(records, f)
 with open('booklist.json', 'w', encoding='UTF-8') as f:
     json.dump(getbook(), f)
+if ft:
+    add_output('found_new','true')
 print('success')
