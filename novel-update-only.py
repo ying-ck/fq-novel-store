@@ -107,17 +107,19 @@ def down_book(it):
     zt = zt[0]
 
     safe_name = sanitize_filename(name)
-    book_dir = os.path.join(script_dir, safe_name)
-    
-    print('\n开始下载《%s》，状态‘%s’' % (name, zt))
-    book_json_path = os.path.join(bookstore_dir, safe_name + '.json')
+    if safe_name not in records[it]:
+        records[it].append(safe_name)
+    print('\n开始下载%s，状态‘%s’' % (str(records[it]), zt))
+    for i in getbook(bookstore_dir):
+        if i in records[it]:
+            jsname = i
+    book_json_path = os.path.join(bookstore_dir, jsname + '.json')
 
     if os.path.exists(book_json_path):
         with open(book_json_path, 'r', encoding='UTF-8') as json_file:
             ozj = json.load(json_file)
     else:
         ozj = {}
-    cs = 0
     for i in zj:
         f = False
         if i in ozj:
@@ -132,11 +134,6 @@ def down_book(it):
             print(i)
             zj[i] = down_text(zj[i])
             time.sleep(random.randint(config['delay'][0],config['delay'][1])/1000)
-            cs += 1
-            if cs >= 5:
-                cs = 0
-                with open(book_json_path, 'w', encoding='UTF-8') as json_file:
-                    json.dump(zj, json_file, ensure_ascii=False)
 
     if zj==ozj:
         return zt
@@ -147,51 +144,20 @@ def down_book(it):
     
     fg = '\n' + config['kgf'] * config['kg']
     if config['save_mode']==1:
-        text_file_path = os.path.join(config['save_path'], safe_name + '.txt')
-        with open(text_file_path, 'w', encoding='UTF-8') as text_file:
-            for chapter_title in zj:
-                text_file.write('\n'+chapter_title + fg)
-                if config['kg'] == 0:
-                    text_file.write(zj[chapter_title] + '\n')
-                else:
-                    text_file.write(zj[chapter_title].replace('\n', fg) + '\n')
-    elif config['save_mode']==2:
-        text_dir_path = os.path.join(config['save_path'], safe_name)
-        if not os.path.exists(text_dir_path):
-            os.makedirs(text_dir_path)
-        for chapter_title in zj:
-            text_file_path = os.path.join(text_dir_path, sanitize_filename(chapter_title) + '.txt')
+        for i in records[it]:
+            text_file_path = os.path.join(config['save_path'], i + '.txt')
             with open(text_file_path, 'w', encoding='UTF-8') as text_file:
-                text_file.write(fg)
-                if config['kg'] == 0:
-                    text_file.write(zj[chapter_title] + '\n')
-                else:
-                    text_file.write(zj[chapter_title].replace('\n', fg) + '\n')
-        
+                for chapter_title in zj:
+                    text_file.write('\n'+chapter_title + fg)
+                    if config['kg'] == 0:
+                        text_file.write(zj[chapter_title] + '\n')
+                    else:
+                        text_file.write(zj[chapter_title].replace('\n', fg) + '\n')       
 
     return zt
-
-def book2down(inp):
-    if inp[:4] == 'http':
-        inp = inp.split('?')[0].split('/')[-1]
-    try:
-        book_id = int(inp)
-        with open(record_path, 'r', encoding='UTF-8') as f:
-            records = json.load(f)
-        if book_id not in records:
-            records.append(book_id)
-        with open(record_path, 'w', encoding='UTF-8') as f:
-            json.dump(records, f)
-        status = down_book(book_id)
-        if status == 'err':
-            return 'err'
-        else:
-            return 's'
-    except ValueError:
-        return 'err'
     
-def getbook():
-    rec = os.listdir('book')
+def getbook(path='book'):
+    rec = os.listdir(path)
     for i in range(len(rec)):
         for j in range(len(rec[i])-1,-1,-1):
             if rec[i][j]=='.':
@@ -239,7 +205,7 @@ if not os.path.exists(record_path):
         os.replace('record.json',record_path)
     else:
         with open(record_path, 'w', encoding='UTF-8') as f:
-            json.dump([], f)
+            json.dump({}, f)
 
 if not os.path.exists(config['save_path']):
     os.makedirs(config['save_path'])
@@ -262,9 +228,9 @@ ft = False
 for book_id in records:
     status = down_book(book_id)
     if status == 'err' or status == u'已完结':
-        records.remove(book_id)
+        records.pop(book_id)
 with open(record_path, 'w', encoding='UTF-8') as f:
-    json.dump(records, f)
+    json.dump(records, f,ensure_ascii=False)
 with open('booklist.json', 'w', encoding='UTF-8') as f:
     json.dump(getbook(), f)
 if ft:
