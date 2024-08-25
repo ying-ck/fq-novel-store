@@ -52,10 +52,10 @@ jobs:
           echo "finished"
   cleanup:
     needs: [update]
-    if: ${{ github.event_name == 'push'}}
     runs-on: ubuntu-latest
     steps:
       - name:  Delete deployment
+        if: ${{ steps.script.outputs.found_new == 'true'}}
         uses: strumwolf/delete-deployment-environment@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -64,21 +64,24 @@ jobs:
   # Single deploy job since we're just deploying
   deploy:
     needs: [update,cleanup]
-    if: ${{ github.event_name == 'push'}}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
+        if: ${{ steps.script.outputs.found_new == 'true'}}
         uses: actions/checkout@v4
       - name: Setup Pages
+        if: ${{ steps.script.outputs.found_new == 'true'}}
         uses: actions/configure-pages@v5
       - name: Upload artifact
+        if: ${{ steps.script.outputs.found_new == 'true'}}
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
           path: '.'
       - name: Deploy to GitHub Pages
+        if: ${{ steps.script.outputs.found_new == 'true'}}
         id: deployment
         uses: actions/deploy-pages@v4
