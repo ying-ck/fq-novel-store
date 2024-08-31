@@ -13,15 +13,16 @@ headers_lib = [
 
 headers = headers_lib[random.randint(0,len(headers_lib)-1)]
 
-bas = 1000000000000000000
-
 def get_cookie(zj,t=0):
     global cookie
+    bas = 1000000000000000000
     if t==0:
-        for i in range(random.randint(bas*6,bas*8),bas*9):
+        for i in range(random.randint(bas*5,bas*8),bas*9):
             time.sleep(random.randint(50,150)/1000)
             cookie = 'novel_web_id='+str(i)
             if len(down_text(zj,2))>200:
+                with open(cookie_path, 'w', encoding='UTF-8') as f:
+                    json.dump(cookie,f)
                 return 's'
     else:
         cookie = t
@@ -61,6 +62,7 @@ def down_text(it,mod=1):
     global cookie
     headers2 = headers
     headers2['cookie'] = cookie
+    f=False
     while True:
         try:
             res = req.get('https://fanqienovel.com/api/reader/full?itemId='+str(it),headers=headers2)
@@ -69,13 +71,17 @@ def down_text(it,mod=1):
         except:
             if mod==2:
                 return('err')
-            time.sleep(0.5)
+            f=True
+            time.sleep(0.4)
     if mod==1:
         s = str_interpreter(n,0)
     else:
         s = n
     try:
-        return '\n'.join(etree.HTML(s).xpath('//p/text()'))
+        if mod==1:
+            return '\n'.join(etree.HTML(s).xpath('//p/text()')),f
+        else:
+            return '\n'.join(etree.HTML(s).xpath('//p/text()'))
     except:
         s = s[6:]
         tmp = 1
@@ -89,7 +95,7 @@ def down_text(it,mod=1):
                 a += i
             elif tmp==1 and i=='p':
                 a = (a+'\n').replace('\n\n','\n')
-        return a
+        return a,f
 
 def sanitize_filename(filename):
     illegal_chars = ['<', '>', ':', '"', '/', '\\', '|', '?', '*']
@@ -120,6 +126,7 @@ def down_book(it):
             ozj = json.load(json_file)
     else:
         ozj = {}
+    cs=0
     for i in zj:
         f = False
         if i in ozj:
@@ -132,7 +139,13 @@ def down_book(it):
             f = True
         if f:
             print(i)
-            zj[i] = down_text(zj[i])
+            zj[i],st = down_text(zj[i])
+            if st:
+                cs+=1
+                if cs>7:
+                    cs=0
+                    print('换cookie')
+                    get_cookie(tzj)
             time.sleep(random.randint(config['delay'][0],config['delay'][1])/1000)
 
     if zj==ozj:
@@ -219,8 +232,6 @@ if os.path.exists(cookie_path):
     tmod = 1
 if tmod==0 or get_cookie(tzj,cookie)=='err':
     get_cookie(tzj)
-with open(cookie_path, 'w', encoding='UTF-8') as f:
-    json.dump(cookie,f)
 
 with open(record_path, 'r', encoding='UTF-8') as f:
     records = json.load(f)
