@@ -42,7 +42,7 @@ jobs:
           python novel-update-only.py
           
       - name: Commit and Push
-        if: ${{ steps.script.outputs.found_new == 'true'}}
+        #if: ${{ steps.script.outputs.found_new == 'true'}}
         run: |
           git config --global user.email "107254798+ying-ck@users.noreply.github.com"
           git config --global user.name "ying-ck"
