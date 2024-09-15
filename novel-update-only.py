@@ -32,6 +32,10 @@ def get_cookie(zj,t=0):
         else:
             return 'err'
 
+def add_output(k, v):
+    cmd = f'echo "{k}={v}">>$GITHUB_OUTPUT'
+    print(f'{cmd}: {os.system(cmd)}')
+
 def down_zj(it):
     global headers
     an = {}
@@ -137,6 +141,7 @@ def down_book(it):
             f = True
         if f:
             zj[i],st = down_text(zj[i])
+            ft=True
             time.sleep(random.randint(config['delay'][0],config['delay'][1])/1000)
             if st:
                 tcs+=1
@@ -575,6 +580,7 @@ if tmod==0 or get_cookie(tzj,cookie)=='err':
     get_cookie(tzj)
 print('success')
 
+ft=False
 with open(record_path, 'r', encoding='UTF-8') as f:
     records = json.load(f)
 for book_id in records:
@@ -583,6 +589,8 @@ for book_id in records:
         records.remove(book_id)
 with open(record_path, 'w', encoding='UTF-8') as f:
     json.dump(records, f)
+if ft:
+    add_output('found_new','true')
 print('update success')
 
 
