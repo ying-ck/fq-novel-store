@@ -33,7 +33,7 @@ def get_cookie(zj,t=0):
             return 'err'
 
 def add_output(k, v):
-    cmd = f'echo "{k}={v}">>$GITHUB_OUTPUT'
+    cmd = f'echo "{k}={v}" >> $GITHUB_OUTPUT'
     print(f'{cmd}: {os.system(cmd)}')
 
 def down_zj(it):
@@ -111,6 +111,7 @@ def sanitize_filename(filename):
 
 
 def down_book(it):
+    global ft
     name, zj, zt = down_zj(it)
     if name == 'err':
         return 'err'
@@ -590,7 +591,7 @@ for book_id in records:
 with open(record_path, 'w', encoding='UTF-8') as f:
     json.dump(records, f)
 if ft:
-    add_output('found_new','true')
+    add_output('found_new', 'true')
 print('update success')
 
 
