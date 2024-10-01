@@ -74,7 +74,7 @@ option {
                 $nextBtn.prop('disabled', index === keys.length - 1);
             }
             function showChapterContent(chapterKey) {
-                $chapterContent.text('\n ' + novelData[chapterKey].replace(/\n/g, '\n\n ') || '内容加载中...');
+                $chapterContent.text('\n ' + novelData[chapterKey].replace(/\n/g, '\n\n\u3000') || '内容加载中...');
             }
             function setNovelData(data) {
                 novelData = data;
