@@ -1,3 +1,5 @@
 requests
 lxml
 ebooklib
+beautifulsoup4
+futures
