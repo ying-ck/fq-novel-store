@@ -2,7 +2,6 @@
 import requests as req
 from lxml import etree
 from lxml import html
-from tkinter import Tk, filedialog
 from ebooklib import epub
 from bs4 import BeautifulSoup
 import json, time, random, os, platform, shutil
